@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 import requests
 import os
 from langchain_core.tools import tool
