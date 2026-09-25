@@ -131,9 +131,13 @@ with col2:
                         clean_text = str(output)
 
                     st.markdown(clean_text)
+                
+                
                 except Exception as e:
                     err_msg = str(e)
                     if "RESOURCE_EXHAUSTED" in err_msg or "429" in err_msg:
-                        st.warning("⚠️ API Quota Limit Reached: The Gemini free-tier rate limit was hit. Please wait a minute and retry.")
+                        st.warning("⚠️ API Quota Limit Reached: The Gemini rate limit was hit. Please wait a minute and retry.")
+                    elif "503" in err_msg or "UNAVAILABLE" in err_msg:
+                        st.warning("⏳ Google Gemini servers are currently experiencing high traffic. Please retry in 10-20 seconds.")
                     else:
                         st.error(f"Agent execution failed: {err_msg}")
