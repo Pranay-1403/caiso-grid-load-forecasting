@@ -1,29 +1,32 @@
-# CAISO Grid Load Forecasting: End-to-End MLOps Pipeline
+## CAISO Grid Load Forecasting: End-to-End MLOps Pipeline
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://caiso-grid-load-forecasting-koj7j4lyxtfjtbkzffsw9j.streamlit.app/)
 
 🔗 **Live Interactive Demo:** [CAISO Grid Load Forecasting Dashboard](https://caiso-grid-load-forecasting-koj7j4lyxtfjtbkzffsw9j.streamlit.app/)
+
 ## Project Overview
 This project implements a Temporal Fusion Transformer (TFT) to forecast 168-hour electricity grid loads for the California Independent System Operator (CAISO). The deep learning model significantly outperforms traditional XGBoost baselines in both RMSE and MAE metrics by capturing complex multi-horizon temporal dependencies. 
 
 The trained model is operationalized as a microservice and connected to an interactive front-end, demonstrating a complete end-to-end data science deployment pipeline.
 
-## Tech Stack
-* **Machine Learning:** PyTorch Forecasting, PyTorch Lightning, Pandas, NumPy
-* **API Backend:** FastAPI, Uvicorn
-* **Frontend UI:** Streamlit
+### Tech Stack
+
+* **Machine Learning & Time Series:** PyTorch Forecasting, PyTorch Lightning, Pandas, NumPy
+* **Agentic AI & LLMs:** LangChain, Google Gemini (`gemini-3.8-flash`), Tool Calling Agents
+* **API Backend:** FastAPI, Uvicorn (Hosted on Render)
+* **Frontend UI:** Streamlit (Hosted on Streamlit Community Cloud)
+* **External Integrations:** CAISO GridStatus API, Open-Meteo Weather API
 * **Environment:** Google Colab, Google Drive Integration
 
 ## Architecture
 1. **Model Training:** A TFT neural network trained on 5 years of historical CAISO load data, optimizing for multi-step time series forecasting.
 2. **REST API:** The saved model weights (`.ckpt`) are loaded into a FastAPI microservice that exposes a `/predict` endpoint.
 3. **Interactive Dashboard:** A Streamlit web application consumes the FastAPI endpoint, allowing users to request and visualize 24-hour to 168-hour forecasts on demand.
+
 ---
 
 ## 🤖 Autonomous AI Grid Dispatcher & Decision Support
 
 Beyond passive predictive forecasting, the platform features an autonomous, multi-tool AI Agent co-pilot designed to support CAISO real-time transmission and market dispatch operations. Built using **LangChain** and **Google Gemini (`gemini-3.8-flash`)**, the agent autonomously orchestrates multi-source external tools to diagnose telemetry health, evaluate meteorological risk drivers, and compile executive-ready dispatch briefings on demand.
-
-### System Architecture & Autonomous Workflow
 
 ### System Architecture & Autonomous Workflow
 
@@ -62,9 +65,9 @@ Beyond passive predictive forecasting, the platform features an autonomous, mult
               |   Live Executive Briefing Rendered   |
               |        (Streamlit UI Interface)       |
               +---------------------------------------+
+
 ```
 
-          
 ### Autonomous Tool Stack
 
 1. **`fetch_caiso_load_forecast`**: Programmatically interfaces with the live FastAPI microservice on Render to verify model ingestion readiness for multi-horizon forward dispatch scheduling.
@@ -78,11 +81,12 @@ Beyond passive predictive forecasting, the platform features an autonomous, mult
 
 ### Production Interface Preview
 
-[CAISO Autonomous AI Dispatcher Briefing](ai_dispatcher_briefing.png)
+![CAISO Autonomous AI Dispatcher Briefing](ai_dispatcher_briefing.png)
 
 ## Project Structure
+
 * `01_CAISO_Data_Pipeline_and_Baseline.ipynb`: Ingestion pipeline (GridStatus + Open-Meteo) and baseline model benchmarks.
 * `02caiso_load_forecasting_tft.ipynb`: Deep learning Temporal Fusion Transformer architecture and multi-quantile evaluations.
 * `api.py`: FastAPI server script handling model inference.
 * `dashboard.py`: Streamlit interface with interactive predictions and autonomous AI agent dispatch briefings.
-* `requirements.txt`: Application, FastAPI, and LangChain agent dependencies.
+* `requirements.txt`: Application, FastAPI microservice, and LangChain agent dependencies.
