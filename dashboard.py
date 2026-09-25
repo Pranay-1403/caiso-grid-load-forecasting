@@ -51,9 +51,10 @@ def fetch_california_ambient_weather() -> dict:
 # Agent Executor Builder with Both Tools
 def get_agent_executor(api_key: str):
     llm = ChatGoogleGenerativeAI(
-        model="gemini-3.8-flash",
-        google_api_key=api_key,
-        temperature=0.2
+    model="gemini-1.5-flash",
+    google_api_key=api_key,
+    temperature=0.2
+)
     )
     tools = [fetch_caiso_load_forecast, fetch_california_ambient_weather]
     prompt = ChatPromptTemplate.from_messages([
