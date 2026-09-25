@@ -74,7 +74,7 @@ Beyond passive predictive forecasting, the platform features an autonomous, mult
 
 ### Production Interface Preview
 
-![CAISO Autonomous AI Dispatcher Briefing](ai_dispatcher_briefing.png)
+![CAISO Autonomous AI Dispatcher Briefing](ai_dispatcher_briefing.png).
 
 ## Project Structure
 * `CAISO_Forecasting_Model.ipynb`: Complete code for data ingestion, preprocessing, model training, and evaluation.
