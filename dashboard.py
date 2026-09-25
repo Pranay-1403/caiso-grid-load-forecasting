@@ -87,7 +87,6 @@ with col1:
                 data = response.json()
                 st.success("Successful response from FastAPI!")
                 
-                # --- REPLACE st.json(data) WITH THIS ---
                 forecast_list = data.get("forecast", [])
                 df = pd.DataFrame(forecast_list)
                 
@@ -100,7 +99,6 @@ with col1:
                     
                     with st.expander("View Detailed Hourly Table"):
                         st.dataframe(df)
-                # ---------------------------------------
             else:
                 st.error(f"Error {response.status_code}: Unable to retrieve forecast.")
         except Exception as e:
