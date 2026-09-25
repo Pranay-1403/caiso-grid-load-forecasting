@@ -85,24 +85,24 @@ with col1:
                 response = requests.get(api_url, timeout=45)
                 if response.status_code == 200:
                     data = response.json()
+                    st.session_state["forecast_list"] = data.get("forecast", [])
                     st.success("Successful response from FastAPI!")
-                    
-                    forecast_list = data.get("forecast", [])
-                    df = pd.DataFrame(forecast_list)
-                    
-                    if not df.empty:
-                        df["timestamp"] = pd.to_datetime(df["timestamp"])
-                        df = df.set_index("timestamp")
-                        
-                        st.subheader("Predicted Grid Load (MW)")
-                        st.line_chart(df["forecast_load_mw"])
-                        
-                        with st.expander("View Detailed Hourly Table"):
-                            st.dataframe(df)
                 else:
                     st.error(f"Error {response.status_code}: Unable to retrieve forecast.")
             except Exception as e:
                 st.error(f"Connection failed: {e}")
+
+    # Render chart whenever data is stored in session state
+    if "forecast_list" in st.session_state and st.session_state["forecast_list"]:
+        df = pd.DataFrame(st.session_state["forecast_list"])
+        df["timestamp"] = pd.to_datetime(df["timestamp"])
+        df = df.set_index("timestamp")
+        
+        st.subheader("Predicted Grid Load (MW)")
+        st.line_chart(df["forecast_load_mw"])
+        
+        with st.expander("View Detailed Hourly Table"):
+            st.dataframe(df)
 
 with col2:
     st.subheader("🤖 AI Dispatcher Co-Pilot")
