@@ -77,16 +77,33 @@ col1, col2 = st.columns(2)
 with col1:
     st.subheader("📊 Model Inference")
     if st.button("Get 24-Hour Forecast"):
-        with st.spinner("Calling FastAPI microservice on Render..."):
-            try:
-                res = requests.get("https://caiso-grid-load-forecasting.onrender.com/predict", timeout=45)
-                if res.status_code == 200:
-                    st.success("Successful response from FastAPI!")
-                    st.json(res.json())
-                else:
-                    st.error(f"Error: Microservice returned status {res.status_code}")
-            except Exception as e:
-                st.error(f"Connection failed: {e}")
+    api_url = "https://caiso-grid-load-forecasting.onrender.com/predict"
+    
+    with st.spinner("Fetching forecast data..."):
+        try:
+            response = requests.get(api_url, timeout=45)
+            if response.status_code == 200:
+                data = response.json()
+                st.success("Successful response from FastAPI!")
+                
+                # --- REPLACE st.json(data) WITH THIS ---
+                forecast_list = data.get("forecast", [])
+                df = pd.DataFrame(forecast_list)
+                
+                if not df.empty:
+                    df["timestamp"] = pd.to_datetime(df["timestamp"])
+                    df = df.set_index("timestamp")
+                    
+                    st.subheader("Predicted Grid Load (MW)")
+                    st.line_chart(df["forecast_load_mw"])
+                    
+                    with st.expander("View Detailed Hourly Table"):
+                        st.dataframe(df)
+                # ---------------------------------------
+            else:
+                st.error(f"Error {response.status_code}: Unable to retrieve forecast.")
+        except Exception as e:
+            st.error(f"Connection failed: {e}")
 
 with col2:
     st.subheader("🤖 AI Dispatcher Co-Pilot")
