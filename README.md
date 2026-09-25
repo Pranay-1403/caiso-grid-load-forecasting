@@ -25,40 +25,44 @@ Beyond passive predictive forecasting, the platform features an autonomous, mult
 
 ### System Architecture & Autonomous Workflow
 
-+-----------------------------------------------------+
-   |               User / Grid Dispatcher                |
-   |       "Generate Executive Dispatcher Briefing"      |
-   +--------------------------+--------------------------+
-                              |
-                              v
-          +---------------------------------------+
-          |    LangChain ReAct Agent Executor     |
-          |       (Powered by Gemini Flash)       |
-          +---------+-------------------+---------+
-                    |                   |
-    [Tool 1 Call]   |                   |   [Tool 2 Call]
-                    v                   v
-  +------------------------+     +------------------------+
-  |  Render FastAPI Service |     |    Open-Meteo API      |
-  |  GET /predict          |     |  Real-time CA Weather  |
-  |  Telemetry & Readiness |     |  Temp, Humidity, Wind  |
-  +-----------+------------+     +-----------+------------+
-              |                              |
-              +--------------+---------------+
-                             | [Telemetry & Weather State]
-                             v
-          +---------------------------------------+
-          |   Thermodynamic & Risk Synthesizer   |
-          |  - Net-Load "Duck Curve" Steepness   |
-          |  - BESS State-of-Charge Planning     |
-          |  - Path 26/46/66 Transfer Headroom   |
-          +-------------------+-------------------+
-                              |
-                              v
-          +---------------------------------------+
-          |   Live Executive Briefing Rendered   |
-          |        (Streamlit UI Interface)       |
-          +---------------------------------------+
+### System Architecture & Autonomous Workflow
+
+```text
+       +-----------------------------------------------------+
+       |               User / Grid Dispatcher                |
+       |       "Generate Executive Dispatcher Briefing"      |
+       +--------------------------+--------------------------+
+                                  |
+                                  v
+              +---------------------------------------+
+              |    LangChain ReAct Agent Executor     |
+              |       (Powered by Gemini Flash)       |
+              +---------+-------------------+---------+
+                        |                   |
+        [Tool 1 Call]   |                   |   [Tool 2 Call]
+                        v                   v
+      +------------------------+     +------------------------+
+      |  Render FastAPI Service |     |    Open-Meteo API      |
+      |  GET /predict          |     |  Real-time CA Weather  |
+      |  Telemetry & Readiness |     |  Temp, Humidity, Wind  |
+      +-----------+------------+     +-----------+------------+
+                  |                              |
+                  +--------------+---------------+
+                                 | [Telemetry & Weather State]
+                                 v
+              +---------------------------------------+
+              |   Thermodynamic & Risk Synthesizer   |
+              |  - Net-Load "Duck Curve" Steepness   |
+              |  - BESS State-of-Charge Planning     |
+              |  - Path 26/46/66 Transfer Headroom   |
+              +-------------------+-------------------+
+                                  |
+                                  v
+              +---------------------------------------+
+              |   Live Executive Briefing Rendered   |
+              |        (Streamlit UI Interface)       |
+              +---------------------------------------+
+```
 
           
 ### Autonomous Tool Stack
@@ -74,9 +78,11 @@ Beyond passive predictive forecasting, the platform features an autonomous, mult
 
 ### Production Interface Preview
 
-![CAISO Autonomous AI Dispatcher Briefing(✏️)](ai_dispatcher_briefing.png).
+![CAISO Autonomous AI Dispatcher Briefing](ai_dispatcher_briefing.png)
 
 ## Project Structure
-* `CAISO_Forecasting_Model.ipynb`: Complete code for data ingestion, preprocessing, model training, and evaluation.
+* `01_CAISO_Data_Pipeline_and_Baseline.ipynb`: Ingestion pipeline (GridStatus + Open-Meteo) and baseline model benchmarks.
+* `02caiso_load_forecasting_tft.ipynb`: Deep learning Temporal Fusion Transformer architecture and multi-quantile evaluations.
 * `api.py`: FastAPI server script handling model inference.
-* `dashboard.py`: Streamlit interface for client interaction.
+* `dashboard.py`: Streamlit interface with interactive predictions and autonomous AI agent dispatch briefings.
+* `requirements.txt`: Application and agent dependencies.
