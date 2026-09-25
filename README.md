@@ -1,5 +1,5 @@
 # CAISO Grid Load Forecasting: End-to-End MLOps Pipeline
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://caiso-grid-load-forecasting-koj7j4lyxtfjtbkzffsw9j.streamlit.app/))
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://caiso-grid-load-forecasting-koj7j4lyxtfjtbkzffsw9j.streamlit.app/)
 
 🔗 **Live Interactive Demo:** [CAISO Grid Load Forecasting Dashboard](https://caiso-grid-load-forecasting-koj7j4lyxtfjtbkzffsw9j.streamlit.app/))
 ## Project Overview
@@ -85,4 +85,4 @@ Beyond passive predictive forecasting, the platform features an autonomous, mult
 * `02caiso_load_forecasting_tft.ipynb`: Deep learning Temporal Fusion Transformer architecture and multi-quantile evaluations.
 * `api.py`: FastAPI server script handling model inference.
 * `dashboard.py`: Streamlit interface with interactive predictions and autonomous AI agent dispatch briefings.
-* `requirements.txt`: Application and agent dependencies.
+* `requirements.txt`: Application, FastAPI, and LangChain agent dependencies.
