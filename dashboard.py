@@ -48,13 +48,12 @@ def fetch_california_ambient_weather() -> dict:
     except Exception as e:
         return {"error": f"Failed to fetch weather: {str(e)}"}
 
-# Agent Executor Builder with Both Tools
+# Agent Executor Builder
 def get_agent_executor(api_key: str):
     llm = ChatGoogleGenerativeAI(
-    model="gemini-1.5-flash",
-    google_api_key=api_key,
-    temperature=0.2
-)
+        model="gemini-1.5-flash",
+        google_api_key=api_key,
+        temperature=0.2
     )
     tools = [fetch_caiso_load_forecast, fetch_california_ambient_weather]
     prompt = ChatPromptTemplate.from_messages([
@@ -117,4 +116,8 @@ with col2:
 
                     st.markdown(clean_text)
                 except Exception as e:
-                    st.error(f"Agent execution failed: {e}")
+                    err_msg = str(e)
+                    if "RESOURCE_EXHAUSTED" in err_msg or "429" in err_msg:
+                        st.warning("⚠️ API Quota Limit Reached: The Gemini free-tier rate limit was hit. Please wait a minute and retry.")
+                    else:
+                        st.error(f"Agent execution failed: {err_msg}")
