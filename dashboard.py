@@ -9,12 +9,11 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 st.set_page_config(page_title="CAISO Grid Forecasting & AI Dispatcher", page_icon="⚡", layout="wide")
 
 st.title("⚡ CAISO Grid Load Forecasting & Autonomous Dispatcher")
-st.write("Production microservice architecture powered by PyTorch TFT, FastAPI, and an autonomous LangChain agent.")
+st.write("Production microservice architecture powered by PyTorch TFT, FastAPI, Open-Meteo, and an autonomous LangChain agent.")
 
-# Retrieve the key securely from Streamlit secrets or environment
 GEMINI_KEY = st.secrets.get("GOOGLE_API_KEY", os.getenv("GOOGLE_API_KEY", ""))
 
-# 1. Define the LangChain Tool
+# Tool 1: Live FastAPI Grid Forecast Microservice on Render
 @tool
 def fetch_caiso_load_forecast() -> dict:
     """Queries the live CAISO Forecasting FastAPI microservice on Render to retrieve 
@@ -28,21 +27,43 @@ def fetch_caiso_load_forecast() -> dict:
     except Exception as e:
         return {"error": f"Failed to connect to forecast service: {str(e)}"}
 
-# 2. Build the Agent
+# Tool 2: Live California Weather Ingestion via Open-Meteo
+@tool
+def fetch_california_ambient_weather() -> dict:
+    """Queries Open-Meteo to fetch current ambient weather conditions (temperature, 
+    relative humidity, apparent temperature, and wind speed) for the Southern California load center."""
+    url = "https://api.open-meteo.com/v1/forecast"
+    params = {
+        "latitude": 34.0522,
+        "longitude": -118.2437,
+        "current": ["temperature_2m", "relative_humidity_2m", "apparent_temperature", "wind_speed_10m"],
+        "temperature_unit": "fahrenheit",
+        "timezone": "America/Los_Angeles"
+    }
+    try:
+        res = requests.get(url, params=params, timeout=10)
+        if res.status_code == 200:
+            return res.json().get("current", {})
+        return {"error": f"Open-Meteo returned status {res.status_code}"}
+    except Exception as e:
+        return {"error": f"Failed to fetch weather: {str(e)}"}
+
+# Agent Executor Builder with Both Tools
 def get_agent_executor(api_key: str):
     llm = ChatGoogleGenerativeAI(
         model="gemini-3.8-flash",
         google_api_key=api_key,
         temperature=0.2
     )
-    tools = [fetch_caiso_load_forecast]
+    tools = [fetch_caiso_load_forecast, fetch_california_ambient_weather]
     prompt = ChatPromptTemplate.from_messages([
         (
             "system",
-            "You are an expert Energy Market & Transmission Grid Analyst for the California "
-            "Independent System Operator (CAISO). Your role is to examine live load forecasts, "
-            "detect potential reserve margin strains, evaluate risks, and generate concise, "
-            "executive-ready grid status briefings. Use the tools available to inspect current data."
+            "You are an expert Energy Market & Transmission Grid Dispatch Analyst for the California "
+            "Independent System Operator (CAISO). Your role is to examine live load forecasts and "
+            "cross-examine them against real-time ambient weather (cooling/heating load drivers). "
+            "Detect potential reserve margin strains, evaluate net-load ramp risks, and generate concise, "
+            "executive-ready grid status briefings using your available tools."
         ),
         ("human", "{input}"),
         MessagesPlaceholder(variable_name="agent_scratchpad"),
@@ -50,7 +71,7 @@ def get_agent_executor(api_key: str):
     agent = create_tool_calling_agent(llm, tools, prompt)
     return AgentExecutor(agent=agent, tools=tools, verbose=False)
 
-# 3. Interactive Interface Layout
+# UI Layout
 col1, col2 = st.columns(2)
 
 with col1:
@@ -71,15 +92,17 @@ with col2:
     st.subheader("🤖 AI Dispatcher Co-Pilot")
     if st.button("Generate Dispatcher Briefing"):
         if not GEMINI_KEY:
-            st.warning("Please configure your GOOGLE_API_KEY in Streamlit Secrets or pass it in the sidebar.")
+            st.warning("Please configure your GOOGLE_API_KEY in Streamlit Secrets.")
         else:
-            with st.spinner("AI Agent querying microservice & synthesizing grid conditions..."):
+            with st.spinner("Agent querying grid microservice and live weather telemetry..."):
                 try:
                     executor = get_agent_executor(GEMINI_KEY)
                     query = (
-                        "Check our live CAISO forecasting service. Confirm the endpoint status "
-                        "and generate a 3-bullet executive morning briefing covering grid readiness, "
-                        "operational risks, and recommended dispatcher action."
+                        "Query both the CAISO forecasting microservice and current California ambient weather. "
+                        "Synthesize an operational executive briefing evaluating: "
+                        "1. Live microservice status and telemetry health "
+                        "2. Current ambient weather conditions and their expected impact on cooling/heating load "
+                        "3. Critical operational risks (e.g. net-load ramp, peak strain) and recommended dispatcher actions."
                     )
                     raw_result = executor.invoke({"input": query})
                     
