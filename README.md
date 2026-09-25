@@ -1,5 +1,7 @@
 # CAISO Grid Load Forecasting: End-to-End MLOps Pipeline
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://caiso-grid-load-forecasting-koj7j4lyxtfjtbkzffsw9j.streamlit.app/))
 
+🔗 **Live Interactive Demo:** [CAISO Grid Load Forecasting Dashboard](https://caiso-grid-load-forecasting-koj7j4lyxtfjtbkzffsw9j.streamlit.app/))
 ## Project Overview
 This project implements a Temporal Fusion Transformer (TFT) to forecast 168-hour electricity grid loads for the California Independent System Operator (CAISO). The deep learning model significantly outperforms traditional XGBoost baselines in both RMSE and MAE metrics by capturing complex multi-horizon temporal dependencies. 
 
