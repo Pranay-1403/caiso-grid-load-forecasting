@@ -110,9 +110,10 @@ Beyond static forecast plots, the platform functions as an active decision-suppo
 
 ### 1. Clone Repository & Install Dependencies
 
-```bash
-git clone [https://github.com/](https://github.com/Pranay-1403/caiso-grid-load-forecasting.git)
+
+git clone https://github.com/Pranay-1403/caiso-grid-load-forecasting.git
 cd caiso-grid-load-forecasting
+
 python -m venv venv
 source venv/bin/activate  # On Windows use: venv\Scripts\activate
 pip install -r requirements.txt
